@@ -1,0 +1,195 @@
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 2rem;
+  animation: statusFadeIn 0.3s ease;
+}
+
+/* ─── States ──────────────────────────────────────────────────────────────── */
+
+.status-error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-connecting {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.15);
+}
+
+.status-recording {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.status-processing {
+  background: rgba(6, 182, 212, 0.1);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.15);
+}
+
+.status-speaking {
+  background: rgba(168, 85, 247, 0.1);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.status-active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+/* ─── Indicators ──────────────────────────────────────────────────────────── */
+
+.active-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.rec-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.connecting-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.connecting-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fbbf24;
+  animation: connectDot 1.2s ease-in-out infinite;
+}
+
+.connecting-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.connecting-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.processing-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(6, 182, 212, 0.2);
+  border-top-color: #22d3ee;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ─── Speaking Bars ───────────────────────────────────────────────────────── */
+
+.speaking-bars {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  height: 18px;
+}
+
+.speaking-bars span {
+  width: 3px;
+  background: #c084fc;
+  border-radius: 1.5px;
+  animation: speakBar 0.8s ease-in-out infinite;
+}
+
+.speaking-bars span:nth-child(1) {
+  animation-delay: 0s;
+  height: 6px;
+}
+
+.speaking-bars span:nth-child(2) {
+  animation-delay: 0.1s;
+  height: 12px;
+}
+
+.speaking-bars span:nth-child(3) {
+  animation-delay: 0.2s;
+  height: 18px;
+}
+
+.speaking-bars span:nth-child(4) {
+  animation-delay: 0.3s;
+  height: 12px;
+}
+
+.speaking-bars span:nth-child(5) {
+  animation-delay: 0.4s;
+  height: 6px;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes connectDot {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes speakBar {
+
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes statusFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
