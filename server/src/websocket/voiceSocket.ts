@@ -127,6 +127,17 @@ export function handleVoiceSocket(ws: WebSocket): void {
 
       addMessage(newSessionId, "assistant", fallbackGreeting);
       sendEvent(ws, { type: "ai_response", text: fallbackGreeting });
+
+      try {
+        const audioBase64 = await textToSpeech(fallbackGreeting, lang);
+        sendEvent(ws, {
+          type: "ai_audio",
+          data: audioBase64,
+          format: "wav",
+        });
+      } catch (ttsError) {
+        console.error("[WS] TTS failed for fallback greeting:", ttsError);
+      }
     }
   }
 

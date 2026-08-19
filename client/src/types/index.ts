@@ -11,15 +11,17 @@ export type HealthReport = {
   conversationSummary?: string;
 };
 
-// ─── Call State ──────────────────────────────────────────────────────────────
+// ─── Call / Voice State ──────────────────────────────────────────────────────
 
 export type CallState =
   | "idle"
   | "connecting"
-  | "active"
-  | "recording"
+  | "ai-speaking"
+  | "listening"
   | "processing"
   | "report";
+
+export type VoiceState = CallState;
 
 // ─── Chat Message ────────────────────────────────────────────────────────────
 

@@ -100,8 +100,10 @@ export function HealthReport({ report, onNewCall }: HealthReportProps) {
 
         <div className="report-disclaimer">
           <p>
-            ⚕️ This is a preliminary health screening and does not constitute a medical diagnosis.
-            Please consult a healthcare professional for proper medical advice.
+            ⚕️ Preliminary Health Screening Assessment • Developed by Vivek • Powered by Sarvam AI
+          </p>
+          <p className="report-medical-note">
+            This tool is for preliminary screening and does not constitute a medical diagnosis. Consult a healthcare professional for proper medical advice.
           </p>
         </div>
       </div>

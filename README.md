@@ -1,56 +1,113 @@
-# Health Voice AI Assessment
+# Health Voice AI — Conversational Health Screening Agent
 
-A web application for AI-powered voice health screening conversations. Users have a real-time voice conversation with an AI health screening assistant that asks questions one at a time, adapts follow-ups based on answers, and generates a structured health report at the end.
+> **Developed by Vivek**
 
-## Features
+An AI-powered conversational voice health screening web application. Users have a natural, hands-free voice dialogue with an AI health screening assistant that asks questions one at a time, detects speech and pauses automatically using client-side Voice Activity Detection (VAD), and produces a structured clinical health report at the end.
 
-- 🎙️ **Push-to-talk voice interface** — Hold the mic button to speak, release to send
-- 🤖 **AI-powered screening** — Adaptive questioning using Sarvam AI's LLM
-- 🔊 **Voice responses** — AI speaks back using text-to-speech
-- 📋 **Structured health report** — Generated automatically when the call ends
-- 🌐 **Hindi & English support** — Works with Indian language speech
-- ⚡ **Real-time WebSocket transport** — Low-latency communication between client and server
-- 🛡️ **Robust error handling** — Graceful handling of silence, API failures, and incomplete calls
+---
 
-## Architecture
+## 🌟 Key Features
 
+- 🗣️ **Hands-Free Conversational Voice Mode** — Click **Start Call** once and talk naturally like a phone call; no need to repeatedly hold/press buttons.
+- 🎙️ **Real-Time Voice Activity Detection (VAD)** — In-browser RMS energy analysis automatically detects when speech begins and ends.
+- ⏱️ **Configurable Silence Detection** — Tolerates natural short pauses (~1.2s sustained silence threshold triggers turn finalization).
+- 🔊 **High-Fidelity 16kHz PCM WAV Audio** — Native uncompressed 16kHz mono WAV recording for 100% reliable transcription with Sarvam STT.
+- 🔇 **Acoustic Echo Prevention** — Automatically disables VAD listening during AI voice playback to avoid false recording triggers from speaker feedback.
+- 🌊 **Dynamic Live Visualizer** — Real-time waveform reactive to microphone volume (emerald during speech, cyan in listening, purple during AI playback).
+- 🤖 **Adaptive Health Screening (Sarvam LLM)** — Collects patient name, main concern, duration, severity, and related symptoms without repeating questions.
+- 🇮🇳 **Bilingual Support (English & Hindi)** — Built-in language selector supporting `en-IN` and `hi-IN`.
+- 📋 **Structured Clinical Health Report** — Extracts structured health summary, severity indicators, and follow-up guidance upon call completion.
+
+---
+
+## 🔄 Conversation Flow
+
+```text
+               ┌──────────────────────────────┐
+               │    User clicks START CALL    │
+               └──────────────┬───────────────┘
+                              │
+               ┌──────────────▼───────────────┐
+               │      AI Generates Greeting   │
+               │   (Spoken aloud via TTS)     │
+               └──────────────┬───────────────┘
+                              │ AI finishes speaking
+               ┌──────────────▼───────────────┐
+         ┌────►│   🟢 Listening Automatically  │
+         │     └──────────────┬───────────────┘
+         │                    │ User speaks naturally
+         │     ┌──────────────▼───────────────┐
+         │     │     Speech Start Detected    │
+         │     │   (16kHz PCM Audio Captured) │
+         │     └──────────────┬───────────────┘
+         │                    │ User pauses (1.2s sustained silence)
+         │     ┌──────────────▼───────────────┐
+         │     │   Speech Finalized & Sent    │
+         │     └──────────────┬───────────────┘
+         │                    │
+         │     ┌──────────────▼───────────────┐
+         │     │   🟡 Processing (STT + LLM)  │
+         │     └──────────────┬───────────────┘
+         │                    │
+         │     ┌──────────────▼───────────────┐
+         │     │  🟣 AI Speaks Follow-up (TTS)│
+         │     └──────────────┬───────────────┘
+         │                    │ AI playback finishes
+         └────────────────────┘
+                              │ User clicks END CALL
+               ┌──────────────▼───────────────┐
+               │   Structured Health Report   │
+               └──────────────────────────────┘
 ```
-Browser (React + TypeScript)
+
+---
+
+## 🏗️ Architecture & Tech Stack
+
+```text
+Browser (React + TypeScript + Vite)
     │
-    ├── Push-to-talk microphone capture
-    ├── WebSocket connection
-    └── Audio playback
+    ├── VAD & Silence Detector (vad.ts)
+    ├── 16kHz PCM Audio Recorder & WAV Encoder (audioRecorder.ts)
+    ├── Centralized State Machine (useVoiceCall.ts)
+    ├── Live Canvas Waveform Visualizer (AudioVisualizer.tsx)
+    └── WebSocket Client (useWebSocket.ts)
     │
-    ▼ WebSocket
+    ▼ WebSocket (ws://localhost:5000/ws)
     │
-Node.js Server (Express + WS)
+Node.js + Express Backend
     │
+    ├── Session & Conversation Manager (conversationManager.ts)
     ├── Speech-to-Text  → Sarvam STT (saaras:v3)
-    ├── Conversation     → Sarvam LLM (sarvam-m4)
-    └── Text-to-Speech   → Sarvam TTS (bulbul:v3)
+    ├── Conversation     → Sarvam LLM (sarvam-105b-conversations / sarvam-m4)
+    ├── Text-to-Speech   → Sarvam TTS (bulbul:v3)
+    └── Report Generator (reportGenerator.ts)
     │
     ▼
-Structured Health Report
+Structured Clinical Health Report
 ```
 
-## Tech Stack
+| Layer | Technology | Details |
+| :--- | :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite | Modern dark-mode UI with glassmorphism |
+| **Audio Engine** | Web Audio API | RMS energy meter, 16kHz PCM resampling, WAV encoder |
+| **Backend** | Node.js, TypeScript, Express | Session-based conversational orchestration |
+| **Transport** | WebSocket (`ws`) | Real-time bidirectional event streaming |
+| **STT** | Sarvam AI (`saaras:v3`) | Indian accent & language-optimized Speech-to-Text |
+| **LLM** | Sarvam AI (`sarvam-105b-conversations`) | Empathetic, concise clinical intake dialogue |
+| **TTS** | Sarvam AI (`bulbul:v3`) | Natural conversational Indian voice playback |
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React, TypeScript, Vite |
-| Backend | Node.js, TypeScript, Express |
-| Transport | WebSocket (ws) |
-| STT | Sarvam AI — saaras:v3 |
-| LLM | Sarvam AI — sarvam-m4 |
-| TTS | Sarvam AI — bulbul:v3 |
+---
 
-## Prerequisites
+## 📋 Prerequisites
 
-- **Node.js** 18+
-- **npm** 9+
-- A **Sarvam AI API key** with access to STT, LLM, and TTS services
+- **Node.js** v18 or higher
+- **npm** v9 or higher
+- A **Sarvam AI API key** with access to STT, LLM, and TTS endpoints
 
-## Setup
+---
+
+## 🚀 Quick Start
 
 ### 1. Clone the repository
 
@@ -65,10 +122,10 @@ cd Health-Voice-AI-Assessment
 cp .env.example .env
 ```
 
-Edit `.env` and add your Sarvam API key:
+Edit `.env` and provide your Sarvam API subscription key:  
 
 ```env
-SARVAM_API_KEY=your_sarvam_api_key_here
+SARVAM_API_KEY=your_sarvam_api_key_here "sk_jj12gw9k_9vebtclLlPhIBlMbH4T0gKRo"
 PORT=5000
 CLIENT_URL=http://localhost:5173
 ```
@@ -79,72 +136,113 @@ CLIENT_URL=http://localhost:5173
 npm run install:all
 ```
 
-### 4. Start the application
+### 4. Run the application
 
 ```bash
 npm run dev
 ```
 
-This starts both the backend server (port 5000) and the React dev server (port 5173) concurrently.
+This concurrently starts:
+- **Backend server**: `http://localhost:5000` (WebSocket: `ws://localhost:5000/ws`)
+- **Vite React client**: `http://localhost:5173`
 
 ### 5. Open in browser
 
-Navigate to [http://localhost:5173](http://localhost:5173)
+Navigate to [http://localhost:5173](http://localhost:5173).
 
-## Environment Variables
+---
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SARVAM_API_KEY` | Sarvam AI API subscription key | *required* |
-| `PORT` | Backend server port | `5000` |
-| `CLIENT_URL` | Frontend URL for CORS | `http://localhost:5173` |
+## 🎯 How to Use
 
-## Usage
+1. **Select Language**: Choose between **English (India)** or **हिन्दी (Hindi)** on the start screen.
+2. **Start Call**: Click **Start Call** once. Microphone permissions will be requested once upfront.
+3. **Listen to AI**: The AI assistant introduces itself and asks for your name.
+4. **Speak Naturally**: When the AI finishes speaking, the indicator turns to 🟢 `Listening — speak naturally`. Answer the question and simply pause when you are done.
+5. **Hands-Free Dialogue**: The system automatically detects your pause, transcribes your speech, generates the AI response, and plays the voice back.
+6. **End Call**: Click **End Call** when finished to receive your structured clinical health report.
+7. **Start New Call**: Review your report and click **Start New Call** to begin a fresh session without reloading.
 
-1. Click **Start Call** to begin a health screening session
-2. The AI assistant will greet you and ask for your name
-3. **Hold the microphone button** to speak, **release** to send your response
-4. The AI will ask follow-up questions about your health concern
-5. Click **End Call** when finished
-6. Review your structured health screening report
+---
 
-## AI Services (Sarvam AI)
+## ⚙️ Voice Activity Detection (VAD) Configuration
 
-This application uses [Sarvam AI](https://sarvam.ai) as the primary AI provider, chosen for its strong support for Indian languages:
+All VAD parameters are centralized in [`client/src/services/vad.ts`](client/src/services/vad.ts):
 
-- **Speech-to-Text (saaras:v3)**: Transcribes audio input, supporting Hindi, English, and other Indian languages
-- **Chat/LLM (sarvam-m4)**: Powers the conversational screening logic with OpenAI-compatible chat completions
-- **Text-to-Speech (bulbul:v3)**: Generates natural-sounding voice responses
-
-All API calls are made server-side only. The API key is never exposed to the frontend.
-
-## Project Structure
-
+```typescript
+export const DEFAULT_VAD_CONFIG = {
+  speechThreshold: 0.022,        // RMS volume threshold to trigger speech start
+  silenceDurationMs: 1200,       // Sustained silence duration to finalize turn
+  minSpeechDurationMs: 300,      // Minimum speech duration to filter noise/clicks
+  maxUtteranceDurationMs: 30000, // Maximum allowed utterance before auto-submit
+  noSpeechPromptMs: 12000,       // Duration of quiet before prompting user
+};
 ```
+
+---
+
+## 📁 Project Structure
+
+```text
 Health-Voice-AI-Assessment/
-├── client/                    # React frontend
+├── client/                          # React + TypeScript Frontend
 │   ├── src/
-│   │   ├── components/        # UI components
-│   │   ├── hooks/             # useWebSocket, useVoiceCall
-│   │   ├── services/          # HTTP API client
-│   │   ├── types/             # TypeScript types
-│   │   ├── App.tsx            # Main app with state routing
-│   │   └── main.tsx           # Entry point
+│   │   ├── components/              # UI Components
+│   │   │   ├── AudioVisualizer.tsx  # Dynamic real-time waveform canvas
+│   │   │   ├── CallControls.tsx     # Hands-free status orb & End Call button
+│   │   │   ├── CallScreen.tsx       # Active call screen orchestrator
+│   │   │   ├── Conversation.tsx     # Message bubbles & typing indicators
+│   │   │   ├── HealthReport.tsx     # Clinical report with severity bars
+│   │   │   └── StatusIndicator.tsx  # Live conversational status badge
+│   │   ├── hooks/
+│   │   │   ├── useVoiceCall.ts      # Central voice conversation state machine
+│   │   │   └── useWebSocket.ts      # WebSocket connection & event listener
+│   │   ├── services/
+│   │   │   ├── audioRecorder.ts     # 16kHz PCM audio recorder & WAV encoder
+│   │   │   └── vad.ts               # Web Audio RMS VAD & silence detector
+│   │   ├── types/                   # TypeScript interfaces (CallState, Report, etc.)
+│   │   ├── App.tsx                  # Root state router (Idle -> Call -> Report)
+│   │   ├── index.css                # Global design system & theme tokens
+│   │   └── main.tsx                 # React application entry
 │   └── package.json
-├── server/                    # Node.js backend
+├── server/                          # Node.js + Express Backend
 │   ├── src/
-│   │   ├── config/            # Environment config
-│   │   ├── conversation/      # State, prompts, manager
-│   │   ├── services/          # Sarvam STT/LLM/TTS, report gen
-│   │   ├── websocket/         # Voice WebSocket handler
-│   │   ├── types/             # TypeScript types
-│   │   └── index.ts           # Express server entry
+│   │   ├── config/                  # Environment & API key validation
+│   │   ├── conversation/            # Prompts, session state, conversation orchestrator
+│   │   │   ├── conversationManager.ts
+│   │   │   ├── prompts.ts
+│   │   │   └── state.ts
+│   │   ├── services/                # Sarvam AI integrations & report extractor
+│   │   │   ├── reportGenerator.ts
+│   │   │   ├── sarvamLlm.ts
+│   │   │   ├── sarvamStt.ts
+│   │   │   └── sarvamTts.ts
+│   │   ├── types/                   # Backend TypeScript interfaces
+│   │   ├── websocket/               # WebSocket event handlers
+│   │   │   └── voiceSocket.ts
+│   │   └── index.ts                 # Express + WebSocket server entry
 │   └── package.json
-├── .env.example               # Environment template
-├── PLAN.md                    # Implementation plan
-└── README.md                  # This file
+├── .env.example                     # Environment variables template
+├── PLAN.md                          # Initial project specification
+└── README.md                        # Project documentation
 ```
 
-## License
+---
+
+## 🔒 Security & Medical Disclaimer
+
+- **API Key Protection**: The Sarvam AI API subscription key is stored securely in backend environment variables and is never exposed to the client browser.
+- **Medical Disclaimer**: This application is an automated screening assistant designed for intake demonstration and triage assessments. It does not provide medical diagnoses or treatment prescriptions.
+
+---
+
+## 👨‍💻 Author & Developer
+
+**Developed by Vivek**
+
+Built with modern Web Audio APIs, React 19, TypeScript, Express, and Sarvam AI voice services.
+
+---
+
+## 📄 License
 
 MIT

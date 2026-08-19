@@ -18,10 +18,20 @@ export async function transcribeAudio(
   language?: string
 ): Promise<SttResult | null> {
   try {
+    const isWav =
+      audioBuffer.length >= 12 &&
+      audioBuffer.toString("utf8", 0, 4) === "RIFF" &&
+      audioBuffer.toString("utf8", 8, 12) === "WAVE";
+
+    const filename = isWav ? "audio.wav" : "audio.webm";
+    const contentType = isWav ? "audio/wav" : "audio/webm";
+
+    console.log(`[STT] Sending ${audioBuffer.length} bytes as ${contentType} (${filename})`);
+
     const form = new FormData();
     form.append("file", audioBuffer, {
-      filename: "audio.webm",
-      contentType: "audio/webm",
+      filename,
+      contentType,
     });
     form.append("model", "saaras:v3");
     form.append("mode", "transcribe");

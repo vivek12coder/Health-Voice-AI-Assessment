@@ -4,13 +4,17 @@ import "./StatusIndicator.css";
 interface StatusIndicatorProps {
   callState: CallState;
   isAiSpeaking: boolean;
+  isUserSpeaking?: boolean;
   error: string | null;
+  promptNotice?: string | null;
 }
 
 export function StatusIndicator({
   callState,
   isAiSpeaking,
+  isUserSpeaking = false,
   error,
+  promptNotice,
 }: StatusIndicatorProps) {
   if (error) {
     return (
@@ -25,13 +29,33 @@ export function StatusIndicator({
     );
   }
 
-  if (isAiSpeaking) {
+  if (promptNotice && callState === "listening" && !isUserSpeaking) {
+    return (
+      <div className="status-indicator status-prompt">
+        <span className="prompt-icon">💡</span>
+        <span>{promptNotice}</span>
+      </div>
+    );
+  }
+
+  if (isAiSpeaking || callState === "ai-speaking") {
     return (
       <div className="status-indicator status-speaking">
         <div className="speaking-bars">
           <span></span><span></span><span></span><span></span><span></span>
         </div>
         <span>AI is speaking...</span>
+      </div>
+    );
+  }
+
+  if (isUserSpeaking) {
+    return (
+      <div className="status-indicator status-user-speaking">
+        <div className="user-speaking-wave">
+          <span></span><span></span><span></span>
+        </div>
+        <span>Speaking... (pause when done)</span>
       </div>
     );
   }
@@ -43,15 +67,15 @@ export function StatusIndicator({
           <div className="connecting-dots">
             <span></span><span></span><span></span>
           </div>
-          <span>Connecting...</span>
+          <span>Connecting to assistant...</span>
         </div>
       );
 
-    case "recording":
+    case "listening":
       return (
-        <div className="status-indicator status-recording">
-          <div className="rec-dot" />
-          <span>Listening...</span>
+        <div className="status-indicator status-listening">
+          <div className="listening-dot" />
+          <span>Listening — speak naturally</span>
         </div>
       );
 
@@ -59,15 +83,7 @@ export function StatusIndicator({
       return (
         <div className="status-indicator status-processing">
           <div className="processing-spinner" />
-          <span>Processing...</span>
-        </div>
-      );
-
-    case "active":
-      return (
-        <div className="status-indicator status-active">
-          <div className="active-dot" />
-          <span>Call active — Hold mic to speak</span>
+          <span>Processing your response...</span>
         </div>
       );
 

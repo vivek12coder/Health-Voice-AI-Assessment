@@ -41,3 +41,10 @@
   margin: 0 0 0.3rem 0;
   color: rgba(255, 255, 255, 0.95);
 }
+
+.call-title-dev {
+  font-size: 0.76rem;
+  color: #22d3ee;
+  font-weight: 500;
+  opacity: 0.9;
+}

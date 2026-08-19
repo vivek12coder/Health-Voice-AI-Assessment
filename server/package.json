@@ -2,6 +2,7 @@
   "name": "health-voice-server",
   "version": "1.0.0",
   "private": true,
+  "author": "Vivek",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",

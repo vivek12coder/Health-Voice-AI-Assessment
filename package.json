@@ -2,7 +2,8 @@
   "name": "health-voice-ai-assessment",
   "version": "1.0.0",
   "private": true,
-  "description": "AI-powered voice health screening assessment using Sarvam AI",
+  "description": "AI-powered voice health screening assessment using Sarvam AI — Developed by Vivek",
+  "author": "Vivek",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "cd server && npm run dev",

@@ -5,7 +5,10 @@ type ConnectionState = "disconnected" | "connecting" | "connected";
 
 type WSEventHandler = (event: WSServerEvent) => void;
 
-const WS_URL = "ws://localhost:5000/ws";
+const WS_URL =
+  (typeof window !== "undefined" && window.location.hostname)
+    ? `ws://${window.location.hostname}:5000/ws`
+    : "ws://localhost:5000/ws";
 
 export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);

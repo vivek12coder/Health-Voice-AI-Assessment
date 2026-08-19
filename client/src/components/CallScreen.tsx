@@ -9,22 +9,27 @@ interface CallScreenProps {
   callState: CallState;
   messages: ChatMessage[];
   isAiSpeaking: boolean;
+  isUserSpeaking?: boolean;
+  audioLevel?: number;
+  promptNotice?: string | null;
   error: string | null;
-  onStartRecording: () => void;
-  onStopRecording: () => void;
   onEndCall: () => void;
+  onManualSubmit?: () => void;
 }
 
 export function CallScreen({
   callState,
   messages,
   isAiSpeaking,
+  isUserSpeaking = false,
+  audioLevel = 0,
+  promptNotice,
   error,
-  onStartRecording,
-  onStopRecording,
   onEndCall,
+  onManualSubmit,
 }: CallScreenProps) {
   const isProcessing = callState === "processing" || callState === "connecting";
+  const isListening = callState === "listening";
 
   return (
     <div className="call-screen">
@@ -37,11 +42,15 @@ export function CallScreen({
             </svg>
           </div>
           <div>
-            <h2 className="call-title">Health Screening</h2>
+            <h2 className="call-title">
+              Health Screening <span className="call-title-dev">• by Vivek</span>
+            </h2>
             <StatusIndicator
               callState={callState}
               isAiSpeaking={isAiSpeaking}
+              isUserSpeaking={isUserSpeaking}
               error={error}
+              promptNotice={promptNotice}
             />
           </div>
         </div>
@@ -50,16 +59,18 @@ export function CallScreen({
       <Conversation messages={messages} isProcessing={isProcessing} />
 
       <AudioVisualizer
-        isRecording={callState === "recording"}
+        isListening={isListening}
+        isUserSpeaking={isUserSpeaking}
         isAiSpeaking={isAiSpeaking}
+        audioLevel={audioLevel}
       />
 
       <CallControls
         callState={callState}
         isAiSpeaking={isAiSpeaking}
-        onStartRecording={onStartRecording}
-        onStopRecording={onStopRecording}
+        isUserSpeaking={isUserSpeaking}
         onEndCall={onEndCall}
+        onManualSubmit={onManualSubmit}
       />
     </div>
   );

@@ -109,6 +109,40 @@
   font-size: 1rem;
 }
 
+/* ─── Language Selector ────────────────────────────────────────────────── */
+
+.language-selector {
+  display: flex;
+  gap: 0.8rem;
+  margin: 0.2rem 0 0.5rem;
+}
+
+.lang-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.lang-btn.active {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.5);
+  color: #22d3ee;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+}
+
 /* ─── Start Button ────────────────────────────────────────────────────────── */
 
 .btn-start-call {
@@ -175,10 +209,13 @@
 /* ─── Animations ──────────────────────────────────────────────────────────── */
 
 @keyframes glowPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
+
   50% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.1);
@@ -186,9 +223,12 @@
 }
 
 @keyframes logoFloat {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-6px);
   }
